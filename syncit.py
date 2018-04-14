@@ -20,15 +20,23 @@ class Transformer(ast.NodeTransformer):
 
     def visit_AsyncFunctionDef(self, asyncfunc_ast):
         asyncfunc_ast = self.generic_visit(asyncfunc_ast)
+
         if self.main_async_func_encountered:
             return asyncfunc_ast
         self.main_async_func_encountered = True
+
+        decorator_list = []
+        for decorator in asyncfunc_ast.decorator_list:
+            if not (isinstance(decorator, ast.Name)
+                    and decorator.id == 'syncit'):
+                decorator_list.append(decorator)
+
         return ast.copy_location(
             ast.FunctionDef(
                 name=self.func_name,
                 args=asyncfunc_ast.args,
                 body=asyncfunc_ast.body,
-                decorator_list=asyncfunc_ast.decorator_list,
+                decorator_list=decorator_list,
                 returns=asyncfunc_ast.returns
             ),
             asyncfunc_ast
@@ -105,5 +113,6 @@ def syncit(async_func):
     module_globals = inspect.getmodule(async_func).__dict__
     exec(compile(tree, filename=filename, mode='exec'), module_globals)
     sync_func = eval(func_name, module_globals)
+    sync_func.async_call = async_func
     del module_globals[func_name]
     return sync_func
