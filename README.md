@@ -90,6 +90,7 @@ result = await my_util.async_call(x, y)
 
 ## Cautions
 
+* Do not mix any other condition with `is_async_code` in `if`. It won't work otherwise.
 * You should use `from syncit import syncit, is_async_mode` instead of `import syncit` and using `syncit.syncit` and `syncit.is_async_mode` in your code. Currently AST transformation isn't able to recognize later forms.
 * Using `syncit` as decorator doesn't work well with methods. So you should use explicit transformation using `syncit` with methods. 
 
