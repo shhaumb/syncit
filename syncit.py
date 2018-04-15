@@ -19,11 +19,12 @@ class Transformer(ast.NodeTransformer):
         self.async_mode_test_on = False
 
     def visit_AsyncFunctionDef(self, asyncfunc_ast):
+        main_async_func_encountered = self.main_async_func_encountered
+        self.main_async_func_encountered = True
         asyncfunc_ast = self.generic_visit(asyncfunc_ast)
 
-        if self.main_async_func_encountered:
+        if main_async_func_encountered:
             return asyncfunc_ast
-        self.main_async_func_encountered = True
 
         decorator_list = []
         for decorator in asyncfunc_ast.decorator_list:

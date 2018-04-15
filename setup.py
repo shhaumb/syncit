@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 # setup the project
 setup(
     name="syncit",
-    version="1.0.3",
+    version="1.0.4",
     url="https://github.com/shhaumb/syncit",
     author="Shubham Jain",
     author_email="sj.iitr@gmail.com",
